@@ -1,0 +1,138 @@
+.contact-container {
+  background: white;
+  color: #333;
+  padding: 40px 20px;
+  border-radius: 12px;
+  max-width: 1300px;
+  margin: 20px auto;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.contact-container h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  color: #EF6F25;
+  margin-bottom: 10px;
+}
+
+.contact-container p {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap; /* Ensures inputs wrap on smaller screens */
+  gap: 15px; /* Space between inputs */
+}
+
+.form-group {
+  flex: 1; /* Make inputs flexible to share available space equally */
+  min-width: 200px; /* Set a minimum width for each input */
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%; /* Ensures inputs take up their container width */
+  padding: 12px;
+  border: 2px solid #ddd;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #EF6F25;
+}
+
+.submit-btn {
+  padding: 8px 16px; /* Reduced padding */
+  background: #EF6F25;
+  color: white;
+  font-size: 0.9rem; /* Smaller font size */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  width: auto; /* Default to content width */
+  max-width: 150px; /* Limit maximum width */
+  margin: 0 auto; /* Center the button */
+}
+
+.submit-btn:hover {
+  background: #d85a1f;
+  transform: translateY(-3px);
+}
+
+.response-message {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1rem;
+  color: green;
+}
+
+.company-info {
+  margin-top: 40px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.company-info h3 {
+  text-align: center;
+  color: #EF6F25;
+  margin-bottom: 15px;
+}
+
+.company-info .info-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  justify-content: center; /* Center the items when they wrap */
+  align-items: center;
+  gap: 15px; /* Space between items */
+  text-align: center; /* Center the text inside each item */
+  padding: 10px; /* Add padding inside the container */
+}
+
+.company-info .info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem; /* Adjust font size for better readability */
+  color: #555;
+  flex: 1 1 200px; /* Make items flexible with a minimum width */
+  max-width: 300px; /* Prevent items from growing too wide */
+}
+
+.company-info .info-item i {
+  font-size: 1.5rem;
+  color: #EF6F25;
+}
+
+iframe {
+  margin-top: 20px;
+  border-radius: 8px;
+  width: 100%; /* Ensures iframe fits within its container */
+  max-width: 100%; /* Prevents overflow */
+  height: 300px;
+  border: 0;
+}
+
+/* Media Queries for Better Responsiveness */
+@media (max-width: 768px) {
+  .company-info .info-item {
+    font-size: 0.9rem; /* Reduce font size on smaller screens */
+    flex: 1 1 150px; /* Adjust minimum width for smaller screens */
+  }
+}

@@ -1,0 +1,119 @@
+/* Footer Container */
+.footer-container {
+  background-color: #333333;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px; /* To account for the logo overlap */
+  position: relative;
+  margin-top: 80px;
+}
+
+/* Logo Section */
+.logo-section {
+  position: absolute;
+  top: -60px; /* Adjust the overlap */
+  background: white; /* White background for the logo */
+  padding: 10px; /* Padding for the logo background */
+  border-radius: 12px; /* Rounded corners for the logo background */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer-logo {
+  width: 100px;
+  height: auto;
+}
+
+/* Footer Content */
+.footer-content {
+  width: 100%;
+  border-top: 1px solid #666;
+  padding-top: 40px;
+}
+
+.footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 10px;
+}
+
+.footer-column h5 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #ef6f25;
+}
+
+.footer-column p,
+.footer-column a {
+  color: white;
+  font-size: 0.9rem;
+  margin: 5px 0;
+  text-decoration: none;
+}
+
+.footer-column a:hover {
+  color: #ef6f25;
+}
+
+/* Contact Button */
+.contact-button.small-button {
+  background-color: #ef6f25;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.contact-button.small-button:hover {
+  background-color: #ff8534;
+  color: white;
+}
+.small-button {
+  font-size: 0.85rem; /* Smaller button size */
+}
+
+/* Social Icons */
+.social-icons a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  margin: 8px 0;
+  text-decoration: none;
+}
+
+.social-icons a:hover {
+  color: #ef6f25;
+}
+
+/* Divider */
+.divider {
+  border-top: 1px solid #666;
+  margin: 10px 0;
+}
+
+/* Copyright Text */
+.copyright {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+/* Adjustments for Mobile View */
+@media (max-width: 576px) {
+  .footer-column {
+    text-align: center;
+  }
+
+  .social-icons {
+    justify-content: center;
+  }
+}

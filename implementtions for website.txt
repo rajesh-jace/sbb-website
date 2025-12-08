@@ -1,0 +1,5 @@
+1).envs
+2).make dynamic for all
+3) loader
+4) deployment
+5) email config 

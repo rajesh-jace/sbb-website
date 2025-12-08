@@ -1,0 +1,94 @@
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url() center center no-repeat;
+  background-size: cover;
+  padding: 100px 0;
+}
+
+  
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #EF6F25;
+}
+  
+.hero-description {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+  
+}
+  
+  .hero-btn {
+    padding: 10px 25px;
+    font-size: 1rem;
+    margin-top: 15px;
+  }
+  
+  /* Featured Projects */
+  .project-card {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .project-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .project-card img {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  /* About Section */
+  .about-section {
+    background-color: #f9f9f9;
+    padding: 60px 0;
+  }
+  
+  .about-section p {
+    font-size: 1.1rem;
+    color: #555;
+  }
+  
+  /* Why Choose Us */
+  .bg-light {
+    background-color: #f8f9fa !important;
+  }
+  
+  h3 {
+    color: #007bff;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  /* Testimonials */
+  .testimonial-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .testimonial-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .testimonial-card p {
+    font-size: 1.1rem;
+    color: #555;
+    font-style: italic;
+  }
+  
+  .testimonial-card h5 {
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  /* Footer */
+  footer {
+    background-color: #343a40;
+    color: #fff;
+  }
+  

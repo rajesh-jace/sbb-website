@@ -1,0 +1,49 @@
+.project-detail-container {
+    /* font-family: Arial, sans-serif; */
+    color: #333;
+    margin-top: 20px;
+    padding: 20px;
+  }
+  
+  h1 {
+    /* color: #007bff; */
+    margin-bottom: 20px;
+  }
+  
+  .project-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .project-image {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .project-description {
+    margin: 20px 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+  
+  .back-button {
+    margin-top: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .back-button:hover {
+    background-color: #0056b3;
+  }
+  

@@ -1,0 +1,49 @@
+/* Navbar background and link colors */
+.custom-navbar {
+    background-color: white !important;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .custom-navbar .nav-link {
+    color: black !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .custom-navbar .nav-link:hover {
+    color: #EF6F25 !important;
+  }
+  
+  .custom-navbar .brand-name {
+    color: #EF6F25 !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  
+  .custom-navbar .brand-name:hover {
+    text-decoration: none;
+    color: #d65c1f !important;
+  }
+  
+  /* Active link styling */
+  .custom-navbar .nav-link.active-link {
+    color: #EF6F25 !important;
+    font-weight: bold;
+    border-bottom: 2px solid #EF6F25;
+  }
+  
+  /* Dropdown styling */
+  .custom-navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .custom-navbar .dropdown-item {
+    color: black !important;
+  }
+  
+  .custom-navbar .dropdown-item:hover {
+    color: white !important;
+    background-color: #EF6F25 !important;
+  }
+  
