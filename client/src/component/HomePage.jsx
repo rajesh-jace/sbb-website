@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Card, Carousel } from "react-bootstrap";
 import "./HomePage.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
+
 const HomePage = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:4500/projects").then((response) => {
+    axios.get(`${API_BASE_URL}/projects`).then((response) => {
       if (response.data.success) {
         setProjects(response.data.data);
       }
@@ -55,7 +57,7 @@ const HomePage = () => {
                   variant="top"
                   src={
                     project.image_urls?.[0]
-                      ? `http://localhost:4500${project.image_urls[0]}`
+                      ? `${API_BASE_URL}${project.image_urls[0]}`
                       : "/images/default.jpg"
                   }
                   alt={project.title}

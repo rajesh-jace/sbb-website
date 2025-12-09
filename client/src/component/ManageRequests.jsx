@@ -4,6 +4,9 @@ import { Modal, Button } from "react-bootstrap";
 import Slider from "react-slick";
 import "./ManageRequests.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
+
+
 const ManageRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +15,7 @@ const ManageRequests = () => {
 
   // Fetch requests
   useEffect(() => {
-    axios.get("http://localhost:4500/build-requests")
+    axios.get(`${API_BASE_URL}/build-requests`)
       .then(res => { setRequests(res.data.data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
@@ -20,7 +23,7 @@ const ManageRequests = () => {
   // Delete request
   const handleDelete = async (id) => {
     if(window.confirm("Delete this request permanently?")) {
-      await axios.delete(`http://localhost:4500/build-requests/${id}`);
+      await axios.delete(`${API_BASE_URL}/build-requests/${id}`);
       setRequests(requests.filter(r => r.id !== id));
     }
   };
@@ -69,7 +72,7 @@ const ManageRequests = () => {
   {parsePhotos(req.photos).length > 0
     ? <div className="photos-thumbs">
         {parsePhotos(req.photos).slice(0,2).map((photo, idx) =>
-  <img key={idx} src={`http://localhost:4500/${photo.replace(/\\/g, "/")}`} className="thumb" alt={`land-${idx}`}/>
+  <img key={idx} src={`${API_BASE_URL}/${photo.replace(/\\/g, "/")}`} className="thumb" alt={`land-${idx}`}/>
     )
     }
       </div>
@@ -104,7 +107,7 @@ const ManageRequests = () => {
             {parsePhotos(activeRequest.photos).map((photo, idx) => (
                 <img
                 key={idx}
-                src={`http://localhost:4500/${photo.replace(/\\/g, "/")}`}
+                src={`${API_BASE_URL}/${photo.replace(/\\/g, "/")}`}
                 alt={`land-${idx}`}
                 style={{ width: "100%", height: "300px", objectFit: "cover", borderRadius: "8px" }}
                 />

@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
+
+
 const EnquiryForm = ({ show, handleClose, project }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -17,7 +20,7 @@ const EnquiryForm = ({ show, handleClose, project }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:4500/enquiry", {
+      const response = await axios.post(`${API_BASE_URL}/enquiry`, {
         ...formData,
         projectName: project.title,
       });

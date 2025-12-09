@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./BuildYourProject.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
+
 const BuildYourProject = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -47,7 +49,7 @@ const BuildYourProject = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:4500/build-project", data, {
+      const response = await axios.post(`${API_BASE_URL}/build-project`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       if (response.data.success) {

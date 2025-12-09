@@ -3,6 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./ProjectDetailss.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
+
+
 const ProjectDetailss = () => {
   const { id } = useParams(); // Get project ID from URL
   const navigate = useNavigate();
@@ -12,7 +15,7 @@ const ProjectDetailss = () => {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const response = await axios.get(`http://localhost:4500/projects/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/projects/${id}`);
         if (response.data.success) {
           setProject(response.data.data);
         } else {
@@ -49,7 +52,7 @@ const ProjectDetailss = () => {
         {project.image_urls.map((url, index) => (
           <img
             key={index}
-            src={`http://localhost:4500${url}`}
+            src={`${API_BASE_URL}${url}`}
             alt={`Project ${project.title}`}
             className="project-image"
           />

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./Contact.css";
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -43,7 +44,7 @@ const Contact = () => {
       });
 
       const response = await axios.post(
-        "http://localhost:4500/contact",
+        `${API_BASE_URL}/contact`,
         formDataToSend,
         {
           headers: {

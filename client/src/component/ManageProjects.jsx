@@ -12,6 +12,10 @@ import {
 import ProjectDetails from "./ProjectDetails";
 // import "./ManageProjects.css"; // Assuming you have a CSS file for custom styles
 
+
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
+
+
 const ManageProjects = () => {
   const [projects, setProjects] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -31,7 +35,7 @@ const ManageProjects = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4500/projects")
+      .get(`${API_BASE_URL}/projects`)
       .then((response) => {
         setProjects(response.data.data);
       })
@@ -54,10 +58,10 @@ const ManageProjects = () => {
     }
 
     const apiCall = editId
-      ? axios.put(`http://localhost:4500/projects/${editId}`, formDataToSend, {
+      ? axios.put(`${API_BASE_URL}/projects/${editId}`, formDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
         })
-      : axios.post("http://localhost:4500/projects", formDataToSend, {
+      : axios.post(`${API_BASE_URL}/projects`, formDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
@@ -84,7 +88,7 @@ const ManageProjects = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:4500/projects/${id}`)
+      .delete(`${API_BASE_URL}/projects/${id}`)
       .then(() => {
         setProjects(projects.filter((project) => project.id !== id));
       })
@@ -93,7 +97,7 @@ const ManageProjects = () => {
 
   const handleView = (id) => {
     axios
-      .get(`http://localhost:4500/projects/${id}`)
+      .get(`${API_BASE_URL}/projects/${id}`)
       .then((response) => {
         console.log("Project data:", response.data.data);
         setSelectedProject(response.data.data);
@@ -224,7 +228,7 @@ const ManageProjects = () => {
                   {formData.image_urls.map((url, index) => (
                     <img
                       key={index}
-                      src={`http://localhost:4500${url}`}
+                      src={`${API_BASE_URL}${url}`}
                       alt="Project"
                       width="100"
                       className="me-2"

@@ -7,6 +7,9 @@ import EnquiryForm from "./EnquiryForm";
 import image1 from "../assets/generated-image.png";
 import image2 from "../assets/generated-image_1.png";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
+
+
 const SectionHeading = ({ iconSrc, title }) => {
   return (
     <div className="section-heading-card">
@@ -30,7 +33,7 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get("http://localhost:4500/projects");
+        const response = await axios.get(`${API_BASE_URL}/projects`);
         console.log(response);
 
         if (response.data.success) {
@@ -74,7 +77,7 @@ const Projects = () => {
                     project.image_urls.map((url, index) => (
                       <Carousel.Item key={index}>
                         <img
-                          src={`http://localhost:4500${url}`}
+                          src={`${API_BASE_URL}${url}`}
                           className="card-img-top project-image"
                           alt={project.title}
                         />
@@ -83,7 +86,7 @@ const Projects = () => {
                   ) : (
                     <Carousel.Item>
                       <img
-                        src={`http://localhost:4500/default.jpg`}
+                        src={`${API_BASE_URL}/default.jpg`}
                         className="card-img-top project-image"
                         alt="Default"
                       />
@@ -143,7 +146,7 @@ const Projects = () => {
                     project.image_urls.map((url, index) => (
                       <Carousel.Item key={index}>
                         <img
-                          src={`http://localhost:4500${url}`}
+                          src={`${API_BASE_URL}${url}`}
                           className="card-img-top project-image"
                           alt={project.title}
                         />
@@ -152,7 +155,7 @@ const Projects = () => {
                   ) : (
                     <Carousel.Item>
                       <img
-                        src={`http://localhost:4500/default.jpg`}
+                        src={`${API_BASE_URL}/default.jpg`}
                         className="card-img-top project-image"
                         alt="Default"
                       />

@@ -1,6 +1,10 @@
 import React from "react";
 import { Modal, Carousel, Button } from "react-bootstrap";
 
+
+const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
+
+
 const ProjectDetails = ({ show, onClose, project, onEdit }) => {
 
     console.log(project);
@@ -18,7 +22,7 @@ const ProjectDetails = ({ show, onClose, project, onEdit }) => {
             <Carousel.Item key={index}>
               <img
                 className="d-block w-100"
-                src={`http://localhost:4500${url}`}
+                src={`${API_BASE_URL}${url}`}
                 alt={`Slide ${index + 1}`}
               />
             </Carousel.Item>
