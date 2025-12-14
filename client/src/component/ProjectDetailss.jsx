@@ -30,11 +30,20 @@ const ProjectDetailss = () => {
     fetchProject();
   }, [id]);
 
+  const handleBack = () => {
+  if (window.history.length > 1) {
+    navigate(-1);
+  } else {
+    navigate("/"); // fallback to homepage
+  }
+};
+
+
   if (error) {
     return (
       <div className="project-detail-container">
         <p className="error-message">{error}</p>
-        <button className="btn btn-primary" onClick={() => navigate(-1)}>
+        <button className="btn btn-primary" onClick={handleBack}>
           Back
         </button>
       </div>

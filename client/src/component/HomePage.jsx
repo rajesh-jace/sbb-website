@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Card, Carousel } from "react-bootstrap";
 import "./HomePage.css";
+import { Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
 
@@ -66,7 +67,7 @@ const HomePage = () => {
                 <Card.Body>
                   <Card.Title>{project.title}</Card.Title>
                   <Card.Text>{project.description}</Card.Text>
-                  <Button variant="primary" href={`/projects/${project.id}`}>
+                  <Button as={Link} variant="primary" to={`/projects/${project.id}`}>
                     View Details
                   </Button>
                 </Card.Body>

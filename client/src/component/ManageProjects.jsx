@@ -10,11 +10,9 @@ import {
   Table,
 } from "react-bootstrap";
 import ProjectDetails from "./ProjectDetails";
-// import "./ManageProjects.css"; // Assuming you have a CSS file for custom styles
+// import "./ManageProjects.css";
 
-
-const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
-
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const ManageProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -29,22 +27,40 @@ const ManageProjects = () => {
   });
   const [editId, setEditId] = useState(null);
 
-///////
   const [selectedProject, setSelectedProject] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
+  const [loading, setLoading] = useState(false); // global loading for API actions
+
   useEffect(() => {
-    axios
-      .get(`${API_BASE_URL}/projects`)
-      .then((response) => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE_URL}/projects`);
         setProjects(response.data.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching projects:", error);
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
   }, []);
 
-  const handleSave = () => {
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      description: "",
+      type: "Apartment",
+      status: "Ongoing",
+      images: null,
+      image_urls: [],
+    });
+    setEditId(null);
+  };
+
+  const handleSave = async () => {
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
     formDataToSend.append("description", formData.description);
@@ -57,20 +73,29 @@ const ManageProjects = () => {
       }
     }
 
-    const apiCall = editId
-      ? axios.put(`${API_BASE_URL}/projects/${editId}`, formDataToSend, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-      : axios.post(`${API_BASE_URL}/projects`, formDataToSend, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+    try {
+      setLoading(true);
+      const apiCall = editId
+        ? axios.put(`${API_BASE_URL}/projects/${editId}`, formDataToSend, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+        : axios.post(`${API_BASE_URL}/projects`, formDataToSend, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
 
-    apiCall
-      .then(() => {
-        setShowModal(false);
-        window.location.reload();
-      })
-      .catch((error) => console.error("Error saving project:", error));
+      await apiCall;
+
+      // instead of full page reload, update list from API
+      const refreshed = await axios.get(`${API_BASE_URL}/projects`);
+      setProjects(refreshed.data.data);
+
+      setShowModal(false);
+      resetForm();
+    } catch (error) {
+      console.error("Error saving project:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEdit = (project) => {
@@ -81,40 +106,61 @@ const ManageProjects = () => {
       type: project.type,
       status: project.status,
       images: null,
-      image_urls: project.image_urls,
+      image_urls: project.image_urls || [],
     });
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    axios
-      .delete(`${API_BASE_URL}/projects/${id}`)
-      .then(() => {
-        setProjects(projects.filter((project) => project.id !== id));
-      })
-      .catch((error) => console.error("Error deleting project:", error));
+  const handleDelete = async (id) => {
+    try {
+      setLoading(true);
+      await axios.delete(`${API_BASE_URL}/projects/${id}`);
+      setProjects((prev) => prev.filter((project) => project.id !== id));
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleView = (id) => {
-    axios
-      .get(`${API_BASE_URL}/projects/${id}`)
-      .then((response) => {
-        console.log("Project data:", response.data.data);
-        setSelectedProject(response.data.data);
-        setShowDetails(true);
-      })
-      .catch((error) => console.error("Error fetching project details:", error));
+  const handleView = async (id) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_BASE_URL}/projects/${id}`);
+      setSelectedProject(response.data.data);
+      setShowDetails(true);
+    } catch (error) {
+      console.error("Error fetching project details:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Container>
+      {/* Global orange loader overlay */}
+      {loading && (
+        <div className="loader-overlay">
+          <div className="orange-loader">
+            <div className="loader-spinner"></div>
+            <p>Processing, please wait...</p>
+          </div>
+        </div>
+      )}
+
       <Row className="mb-3">
         <Col>
-          <Button variant="primary" style={{ marginTop: "20px" }} onClick={() => setShowModal(true)}>
+          <Button
+            variant="primary"
+            style={{ marginTop: "20px" }}
+            onClick={() => setShowModal(true)}
+            disabled={loading}
+          >
             Add Project
           </Button>
         </Col>
       </Row>
+
       <Table striped bordered hover style={{ marginBottom: "200px" }}>
         <thead>
           <tr>
@@ -133,10 +179,11 @@ const ManageProjects = () => {
               <td>{project.status}</td>
               <td>{project.description}</td>
               <td>
-              <Button
+                <Button
                   variant="info"
                   onClick={() => handleView(project.id)}
                   className="me-2"
+                  disabled={loading}
                 >
                   View
                 </Button>
@@ -144,6 +191,7 @@ const ManageProjects = () => {
                   variant="warning"
                   onClick={() => handleEdit(project)}
                   className="me-2"
+                  disabled={loading}
                 >
                   Edit
                 </Button>
@@ -151,6 +199,7 @@ const ManageProjects = () => {
                   variant="danger"
                   onClick={() => handleDelete(project.id)}
                   className="me-2"
+                  disabled={loading}
                 >
                   Delete
                 </Button>
@@ -160,8 +209,8 @@ const ManageProjects = () => {
         </tbody>
       </Table>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
+      <Modal show={showModal} onHide={() => { if (!loading) { setShowModal(false); resetForm(); } }}>
+        <Modal.Header closeButton={!loading}>
           <Modal.Title>{editId ? "Edit Project" : "Add Project"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -174,6 +223,7 @@ const ManageProjects = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
+                disabled={loading}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -185,6 +235,7 @@ const ManageProjects = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
+                disabled={loading}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -194,6 +245,7 @@ const ManageProjects = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value })
                 }
+                disabled={loading}
               >
                 <option value="Apartment">Apartment</option>
                 <option value="Villa">Villa</option>
@@ -207,6 +259,7 @@ const ManageProjects = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
                 }
+                disabled={loading}
               >
                 <option value="Ongoing">Ongoing</option>
                 <option value="Completed">Completed</option>
@@ -221,8 +274,9 @@ const ManageProjects = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, images: e.target.files })
                 }
+                disabled={loading}
               />
-              {formData.image_urls.length > 0 && (
+              {formData.image_urls && formData.image_urls.length > 0 && (
                 <div className="mt-2">
                   <p>Existing Images:</p>
                   {formData.image_urls.map((url, index) => (
@@ -240,11 +294,19 @@ const ManageProjects = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => { setShowModal(false); resetForm(); }}
+            disabled={loading}
+          >
             Close
           </Button>
-          <Button variant="primary" onClick={handleSave}>
-            Save
+          <Button
+            variant="primary"
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {editId ? (loading ? "Updating..." : "Save Changes") : (loading ? "Saving..." : "Save")}
           </Button>
         </Modal.Footer>
       </Modal>

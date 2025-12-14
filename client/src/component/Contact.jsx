@@ -13,6 +13,7 @@ const Contact = () => {
     message: "",
   });
   const [responseMessage, setResponseMessage] = useState("");
+   const [loading, setLoading] = useState(false); // ← New loading state
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,6 +21,8 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+     setLoading(true); // ← Start loading
+    setResponseMessage(""); // Clear previous messages
     try {
       const response = await axios.post(
         `${API_BASE_URL}/contact`,
@@ -36,6 +39,8 @@ const Contact = () => {
     } catch (error) {
       console.error("Error sending message:", error);
       setResponseMessage("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false); // ← Stop loading
     }
   };
 
@@ -53,6 +58,7 @@ const Contact = () => {
         onChange={handleChange}
         placeholder="Your Full Name"
         required
+        disabled={loading} // ← Disable during loading
       />
     </div>
     <div className="form-group">
@@ -63,6 +69,7 @@ const Contact = () => {
         onChange={handleChange}
         placeholder="Your Email Address"
         required
+        disabled={loading} // ← Disable during loading
       />
     </div>
     <div className="form-group">
@@ -73,6 +80,7 @@ const Contact = () => {
         onChange={handleChange}
         placeholder="Your Contact Number"
         required
+        disabled={loading} // ← Disable during loading
       />
     </div>
   </div>
@@ -84,14 +92,24 @@ const Contact = () => {
       placeholder="Your Message"
       rows="4"
       required
+      disabled={loading} // ← Disable during loading
     ></textarea>
   </div>
-  <button type="submit" className="submit-btn">
-    Send Message
+  <button type="submit" className="submit-btn" disabled={loading}>
+    {loading ? "Sending..." : "Send Message"}
   </button>
 </form>
 
-      {responseMessage && <p className="response-message">{responseMessage}</p>}
+     {loading && (
+        <div className="loader-overlay">
+          <div className="orange-loader">
+            <div className="loader-spinner"></div>
+            <p>Sending your message...</p>
+          </div>
+        </div>
+      )}
+
+      {responseMessage && !loading && <p className="response-message">{responseMessage}</p>}
 
       {/* Company Contact Info */}
       <div className="company-info">

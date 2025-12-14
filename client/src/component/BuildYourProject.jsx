@@ -16,6 +16,7 @@ const BuildYourProject = () => {
   });
   const [landPhotos, setLandPhotos] = useState([]);
   const [responseMessage, setResponseMessage] = useState("");
+   const [loading, setLoading] = useState(false); // ← New loading state
 
   // Handle input change
   const handleChange = (e) => {
@@ -34,6 +35,9 @@ const BuildYourProject = () => {
       setResponseMessage("Please fill all required fields.");
       return;
     }
+
+    setLoading(true); // ← Start loading
+    setResponseMessage(""); // Clear previous messages
 
     const data = new FormData();
     data.append("name", formData.name);
@@ -70,7 +74,10 @@ const BuildYourProject = () => {
     } catch (error) {
       console.error("Error submitting request:", error);
       setResponseMessage("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false); // ← Stop loading
     }
+
   };
 
   return (
@@ -87,6 +94,7 @@ const BuildYourProject = () => {
               onChange={handleChange}
               placeholder="Your Full Name"
               required
+              disabled={loading} // ← Disable during loading
             />
           </div>
           <div className="form-group">
@@ -97,6 +105,7 @@ const BuildYourProject = () => {
               onChange={handleChange}
               placeholder="Your Email Address"
               required
+              disabled={loading} // ← Disable during loading
             />
           </div>
           <div className="form-group">
@@ -107,11 +116,12 @@ const BuildYourProject = () => {
               onChange={handleChange}
               placeholder="Your Contact Number"
               required
+              disabled={loading} // ← Disable during loading
             />
           </div>
         </div>
         <div className="form-group">
-          <select name="projectType" value={formData.projectType} onChange={handleChange}>
+          <select name="projectType" value={formData.projectType} onChange={handleChange} disabled={loading} >
             <option value="House">House</option>
             <option value="Villa">Villa</option>
             <option value="Apartment">Apartment</option>
@@ -128,6 +138,7 @@ const BuildYourProject = () => {
             onChange={handleChange}
             placeholder="Project Location"
             required
+            disabled={loading} // ← Disable during loading
           />
         </div>
         <div className="form-group">
@@ -137,6 +148,7 @@ const BuildYourProject = () => {
             value={formData.measurements}
             onChange={handleChange}
             placeholder="Measurements (e.g., sq. ft.)"
+            disabled={loading} // ← Disable during loading
           />
         </div>
         <div className="form-group">
@@ -146,14 +158,29 @@ const BuildYourProject = () => {
             onChange={handleChange}
             placeholder="Additional Details"
             rows="4"
+            disabled={loading} // ← Disable during loading
           ></textarea>
         </div>
         <div className="form-group">
-          <input type="file" name="landPhotos" multiple onChange={handleFileChange} required />
+          <input type="file" name="landPhotos" multiple onChange={handleFileChange} required
+          disabled={loading} // ← Disable during loading
+          />
         </div>
-        <button type="submit" className="submit-btn">Submit Request</button>
-      </form>
-      {responseMessage && <p className="response-message">{responseMessage}</p>}
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? "Submitting..." : "Submit Request"}
+        </button>      
+        </form>
+
+       {loading && (
+        <div className="loader-overlay">
+          <div className="orange-loader">
+            <div className="loader-spinner"></div>
+            <p>Processing your request...</p>
+          </div>
+        </div>
+      )}
+
+      {responseMessage && !loading && <p className="response-message">{responseMessage}</p>}
     </div>
   );
 };
