@@ -30,7 +30,7 @@ const ProjectDetails = ({ show, onClose, project, onEdit }) => {
         </Carousel>
         <div className="mt-3">
           <h5>Description</h5>
-          <p>{project.description}</p>
+          <p className="project-description">{project.description}</p>
           <h6>Type: {project.type}</h6>
           <h6>Status: {project.status}</h6>
         </div>

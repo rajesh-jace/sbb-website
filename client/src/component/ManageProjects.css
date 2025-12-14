@@ -1,0 +1,24 @@
+/* Prevent horizontal overflow in table */
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+table td,
+table th {
+  white-space: normal;        /* allow wrapping */
+  word-wrap: break-word;      /* old syntax */
+  overflow-wrap: break-word;  /* modern syntax */
+}
+
+
+.projects-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.projects-table td,
+.projects-table th {
+  white-space: normal;
+  overflow-wrap: break-word;
+}

@@ -95,7 +95,9 @@ const Projects = () => {
                 </Carousel>
                 <div className="card-body">
                   <h5 className="card-title">{project.title}</h5>
-                  <p className="card-text">{project.description}</p>
+                  <p className="card-text">{project.description.length > 100
+                    ? `${project.description.slice(0, 100)}...`
+                    : project.description}</p>
                   <p>
                     <strong>Type:</strong> {project.type}
                   </p>
@@ -164,7 +166,9 @@ const Projects = () => {
                 </Carousel>
                 <div className="card-body">
                   <h5 className="card-title">{project.title}</h5>
-                  <p className="card-text">{project.description}</p>
+                  <p className="card-text">{project.description.length > 100
+                    ? `${project.description.slice(0, 100)}...`
+                    : project.description}</p>
                   <p>
                     <strong>Type:</strong> {project.type}
                   </p>

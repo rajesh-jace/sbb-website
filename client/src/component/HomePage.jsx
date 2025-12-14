@@ -66,7 +66,9 @@ const HomePage = () => {
 
                 <Card.Body>
                   <Card.Title>{project.title}</Card.Title>
-                  <Card.Text>{project.description}</Card.Text>
+                  <Card.Text>{project.description.length > 100
+                    ? `${project.description.slice(0, 100)}...`
+                    : project.description}</Card.Text>
                   <Button as={Link} variant="primary" to={`/projects/${project.id}`}>
                     View Details
                   </Button>

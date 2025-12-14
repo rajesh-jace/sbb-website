@@ -14,6 +14,10 @@ import ProjectDetails from "./ProjectDetails";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
+// ← Add here, above the component
+const truncate = (text = "", max = 80) =>
+  text.length > max ? `${text.slice(0, max)}...` : text;
+
 const ManageProjects = () => {
   const [projects, setProjects] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -137,6 +141,7 @@ const ManageProjects = () => {
   };
 
   return (
+    
     <Container>
       {/* Global orange loader overlay */}
       {loading && (
@@ -161,7 +166,7 @@ const ManageProjects = () => {
         </Col>
       </Row>
 
-      <Table striped bordered hover style={{ marginBottom: "200px" }}>
+      <Table className="projects-table" striped bordered hover style={{ marginBottom: "200px" }}>
         <thead>
           <tr>
             <th>Title</th>
@@ -177,7 +182,7 @@ const ManageProjects = () => {
               <td>{project.title}</td>
               <td>{project.type}</td>
               <td>{project.status}</td>
-              <td>{project.description}</td>
+              <td>{truncate(project.description, 80)}</td>
               <td>
                 <Button
                   variant="info"

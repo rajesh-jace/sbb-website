@@ -46,4 +46,16 @@
   .back-button:hover {
     background-color: #0056b3;
   }
+
+  .project-detail-container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.project-description {
+  white-space: normal;        /* allow normal wrapping */
+  word-wrap: break-word;      /* legacy */
+  overflow-wrap: break-word;  /* modern: break long words/URLs */
+}
+
   
