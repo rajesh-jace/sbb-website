@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "dev": "cross-env NODE_ENV=local nodemon index.js",
-    "start": "cross-env NODE_ENV=local nodemon index.js",
-    "prod": "cross-env NODE_ENV=production node index.js",
-    "test": "cross-env NODE_ENV=test node index.js",
-    "server": "node index.js"
-  },
+"scripts": {
+  "dev": "nodemon index.js",          
+  "start": "nodemon index.js",        
+  "prod": "node index.js",            
+  "test": "node index.js",
+  "server": "node index.js"
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
