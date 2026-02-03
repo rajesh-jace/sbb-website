@@ -83,20 +83,50 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ✅ Database using environment variables
-const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-});
+// ✅ DYNAMIC DATABASE - MySQL (local) vs PostgreSQL (production)
+let db;
 
-// Test DB connection
-db.getConnection().then(() => {
-  console.log('✅ Database connected successfully');
-}).catch(err => {
-  console.error('❌ Database connection failed:', err);
-});
+if (env === 'production' && process.env.DATABASE_URL) {
+  // PRODUCTION: PostgreSQL (Render)
+  const { Pool } = require('pg');
+  db = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+  console.log('🗄️  PostgreSQL (Render) connected');
+} else {
+  // LOCAL: MySQL
+  const mysql = require("mysql2/promise");
+  db = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+  });
+  console.log('🗄️  MySQL (local) connected');
+}
+
+// Test DB connection (same for both)
+// Test DB connection (works for BOTH MySQL & PostgreSQL)
+(async () => {
+  try {
+    if (env === 'production' && process.env.DATABASE_URL) {
+      // PostgreSQL test query
+      const result = await db.query('SELECT 1');
+      console.log('✅ PostgreSQL connected:', result.rows.length, 'rows');
+    } else {
+      // MySQL test connection
+      const connection = await db.getConnection();
+      await connection.query('SELECT 1');
+      connection.release();
+      console.log('✅ MySQL connected successfully');
+    }
+  } catch (err) {
+    console.error('❌ Database connection failed:', err.message);
+  }
+})();
+
+
 
 // CONTACT FORM ROUTE ✅ Updated with env vars
 app.post("/contact", async (req, res) => {
