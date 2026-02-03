@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./projects.css";
+import "./Projects.css";
 import { useNavigate } from "react-router-dom";
 import Carousel from "react-bootstrap/Carousel";
 import EnquiryForm from "./EnquiryForm";
@@ -8,7 +8,6 @@ import image1 from "../assets/generated-image.png";
 import image2 from "../assets/generated-image_1.png";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL; // ← read from .env
-
 
 const SectionHeading = ({ iconSrc, title }) => {
   return (
@@ -18,7 +17,6 @@ const SectionHeading = ({ iconSrc, title }) => {
     </div>
   );
 };
-
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -41,7 +39,7 @@ const Projects = () => {
           setProjects(allProjects);
           // Filter ongoing projects based on the `status` field
           setOngoingProjects(
-            allProjects.filter((project) => project.status === "Ongoing")
+            allProjects.filter((project) => project.status === "Ongoing"),
           );
         }
       } catch (error) {
@@ -63,11 +61,8 @@ const Projects = () => {
 
       {/* Ongoing Projects Section */}
       <section className="ongoing-projects mb-5">
-          <SectionHeading 
-    iconSrc={image1} 
-    title="ONGOING PROJECTS" 
-  />
-        
+        <SectionHeading iconSrc={image1} title="ONGOING PROJECTS" />
+
         <div className="row">
           {ongoingProjects.map((project) => (
             <div className="col-md-4 mb-4" key={project.id}>
@@ -95,9 +90,11 @@ const Projects = () => {
                 </Carousel>
                 <div className="card-body">
                   <h5 className="card-title">{project.title}</h5>
-                  <p className="card-text">{project.description.length > 100
-                    ? `${project.description.slice(0, 100)}...`
-                    : project.description}</p>
+                  <p className="card-text">
+                    {project.description.length > 100
+                      ? `${project.description.slice(0, 100)}...`
+                      : project.description}
+                  </p>
                   <p>
                     <strong>Type:</strong> {project.type}
                   </p>
@@ -134,11 +131,8 @@ const Projects = () => {
 
       {/* All Projects Section */}
       <section className="all-projects">
-          <SectionHeading 
-    iconSrc={image2} 
-    title="ALL PROJECTS" 
-  />
-        
+        <SectionHeading iconSrc={image2} title="ALL PROJECTS" />
+
         <div className="row">
           {projects.map((project) => (
             <div className="col-md-4 mb-4" key={project.id}>
@@ -166,9 +160,11 @@ const Projects = () => {
                 </Carousel>
                 <div className="card-body">
                   <h5 className="card-title">{project.title}</h5>
-                  <p className="card-text">{project.description.length > 100
-                    ? `${project.description.slice(0, 100)}...`
-                    : project.description}</p>
+                  <p className="card-text">
+                    {project.description.length > 100
+                      ? `${project.description.slice(0, 100)}...`
+                      : project.description}
+                  </p>
                   <p>
                     <strong>Type:</strong> {project.type}
                   </p>
