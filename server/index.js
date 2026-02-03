@@ -166,28 +166,35 @@ app.post("/contact", async (req, res) => {
 // Add a project with image upload
 // ✅ PROJECTS - Works for BOTH Local & Cloudinary (same code!)
 app.post("/projects", upload.array("images", 5), async (req, res) => {
-  console.log("📤 Upload mode:", env === 'production' ? 'Cloudinary' : 'Local');
+  console.log("📤 Upload mode:", env === "production" ? "Cloudinary" : "Local");
   console.log("request from frontend", req.body);
-  
+
   const { title, description, type, status } = req.body;
-  
-  // ✅ DYNAMIC URL HANDLING
+
   let imageUrls;
-  if (env === 'production') {
-    // Cloudinary returns full URL
-    imageUrls = req.files.map(file => file.secure_url);
+  if (env === "production") {
+    imageUrls = req.files.map((file) => file.secure_url);
   } else {
-    // Local returns relative path
-    imageUrls = req.files.map(file => `/uploads/${file.filename}`);
+    imageUrls = req.files.map((file) => `/uploads/${file.filename}`);
   }
-  
+
   console.log("🖼️  Image URLs:", imageUrls);
-  
+
   try {
-    await db.query(
-      "INSERT INTO projects (title, description, type, status, image_urls) VALUES (?, ?, ?, ?, ?)",
-      [title, description, type, status, JSON.stringify(imageUrls)]
-    );
+    if (env === "production" && process.env.DATABASE_URL) {
+      // PostgreSQL: $1, $2, ...
+      await db.query(
+        "INSERT INTO projects (title, description, type, status, image_urls) VALUES ($1, $2, $3, $4, $5)",
+        [title, description, type, status, JSON.stringify(imageUrls)]
+      );
+    } else {
+      // MySQL: ?
+      await db.query(
+        "INSERT INTO projects (title, description, type, status, image_urls) VALUES (?, ?, ?, ?, ?)",
+        [title, description, type, status, JSON.stringify(imageUrls)]
+      );
+    }
+
     res.status(201).send({ success: true, message: "Project added successfully!" });
   } catch (error) {
     console.error("Error adding project:", error.message);
@@ -195,10 +202,21 @@ app.post("/projects", upload.array("images", 5), async (req, res) => {
   }
 });
 
+
 // Get all projects
 app.get("/projects", async (req, res) => {
   try {
-    const [projects] = await db.query("SELECT * FROM projects");
+    let projects;
+
+    if (env === "production" && process.env.DATABASE_URL) {
+      // PostgreSQL
+      const result = await db.query("SELECT * FROM projects");
+      projects = result.rows;
+    } else {
+      // MySQL
+      const [rows] = await db.query("SELECT * FROM projects");
+      projects = rows;
+    }
 
     const processedProjects = projects.map((project) => {
       try {
@@ -206,7 +224,10 @@ app.get("/projects", async (req, res) => {
           project.image_urls = JSON.parse(project.image_urls);
         }
       } catch (err) {
-        console.error(`Error parsing image_urls for project ID ${project.id}:`, err.message);
+        console.error(
+          `Error parsing image_urls for project ID ${project.id}:`,
+          err.message
+        );
         project.image_urls = [];
       }
       return project;
@@ -219,13 +240,32 @@ app.get("/projects", async (req, res) => {
   }
 });
 
+
 app.get("/projects/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const [projects] = await db.query("SELECT * FROM projects WHERE id = ?", [id]);
-    if (projects.length === 0) {
-      return res.status(404).send({ success: false, error: "Project not found." });
+    let projects;
+
+    if (env === "production" && process.env.DATABASE_URL) {
+      const result = await db.query(
+        "SELECT * FROM projects WHERE id = $1",
+        [id]
+      );
+      projects = result.rows;
+    } else {
+      const [rows] = await db.query(
+        "SELECT * FROM projects WHERE id = ?",
+        [id]
+      );
+      projects = rows;
     }
+
+    if (projects.length === 0) {
+      return res
+        .status(404)
+        .send({ success: false, error: "Project not found." });
+    }
+
     const project = projects[0];
 
     try {
@@ -245,6 +285,7 @@ app.get("/projects/:id", async (req, res) => {
     res.status(500).send({ success: false, error: "Failed to fetch project." });
   }
 });
+
 
 // Update a project
 app.put("/projects/:id", upload.array("images", 5), async (req, res) => {
