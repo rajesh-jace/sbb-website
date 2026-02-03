@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const mysql = require("mysql2/promise");
+// const mysql = require("mysql2/promise");
 const multer = require("multer");
 const path = require("path");
 const nodemailer = require("nodemailer");
@@ -87,7 +87,7 @@ const transporter = nodemailer.createTransport({
 let db;
 
 if (env === 'production' && process.env.DATABASE_URL) {
-  // PRODUCTION: PostgreSQL (Render)
+  // PRODUCTION: PostgreSQL only
   const { Pool } = require('pg');
   db = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -95,7 +95,7 @@ if (env === 'production' && process.env.DATABASE_URL) {
   });
   console.log('🗄️  PostgreSQL (Render) connected');
 } else {
-  // LOCAL: MySQL
+  // LOCAL: MySQL only
   const mysql = require("mysql2/promise");
   db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -105,6 +105,7 @@ if (env === 'production' && process.env.DATABASE_URL) {
   });
   console.log('🗄️  MySQL (local) connected');
 }
+
 
 // Test DB connection (same for both)
 // Test DB connection (works for BOTH MySQL & PostgreSQL)
