@@ -32,6 +32,10 @@
 
   "engines": {
     "node": "20.x"
+  },
+  "overrides": {
+    "gopd": "1.0.1",
+    "get-intrinsic": "1.2.2"
   }
 
 
