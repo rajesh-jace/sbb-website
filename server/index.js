@@ -336,6 +336,10 @@ app.delete("/projects/:id", async (req, res) => {
 });
 
 
+
+
+
+
 // BUILD PROJECT REQUEST ROUTE ✅ Updated with env vars
 app.post("/build-project", upload.array("landPhotos", 10), async (req, res) => {
   const { name, email, phone, projectType, location, measurements, additionalDetails } = req.body;
