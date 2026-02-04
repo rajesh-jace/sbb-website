@@ -87,14 +87,13 @@ const transporter = nodemailer.createTransport({
 let db;
 
 if (env === 'production' && process.env.DATABASE_URL) {
-  // PRODUCTION: PostgreSQL only
-  const { Pool } = require('pg');
-  db = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
-  console.log('🗄️  PostgreSQL (Render) connected');
-} else {
+  // PRODUCTION: MySQL (Railway)
+  const mysql = require("mysql2/promise");
+  db = mysql.createPool(process.env.DATABASE_URL);
+  console.log('🗄️  MySQL (Railway) connected');
+}
+ 
+else {
   // LOCAL: MySQL only
   const mysql = require("mysql2/promise");
   db = mysql.createPool({
@@ -112,10 +111,14 @@ if (env === 'production' && process.env.DATABASE_URL) {
 (async () => {
   try {
     if (env === 'production' && process.env.DATABASE_URL) {
-      // PostgreSQL test query
-      const result = await db.query('SELECT 1');
-      console.log('✅ PostgreSQL connected:', result.rows.length, 'rows');
-    } else {
+  // MySQL test
+  const connection = await db.getConnection();
+  await connection.query('SELECT 1');
+  connection.release();
+  console.log('✅ MySQL production connected');
+}
+
+    else {
       // MySQL test connection
       const connection = await db.getConnection();
       await connection.query('SELECT 1');
