@@ -182,7 +182,7 @@ app.post("/projects", upload.array("images", 5), async (req, res) => {
   let imageUrls;
   if (env === 'production') {
     // Cloudinary returns full URL
-    imageUrls = req.files.map(file => file.secure_url);
+    imageUrls = req.files.map(file => file.path);
   } else {
     // Local returns relative path
     imageUrls = req.files.map(file => `/uploads/${file.filename}`);
