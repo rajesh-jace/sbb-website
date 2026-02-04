@@ -171,6 +171,10 @@ app.post("/contact", async (req, res) => {
 app.post("/projects", upload.array("images", 5), async (req, res) => {
   console.log("📤 Upload mode:", env === 'production' ? 'Cloudinary' : 'Local');
   console.log("request from frontend", req.body);
+   console.log("📤 Upload mode:", env);
+  console.log("req.files length:", req.files && req.files.length);
+  console.log("req.files sample:", req.files ? req.files[0] : null);
+  console.log("req.body:", req.body);
   
   const { title, description, type, status } = req.body;
   
