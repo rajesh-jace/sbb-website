@@ -284,15 +284,21 @@ const ManageProjects = () => {
               {formData.image_urls && formData.image_urls.length > 0 && (
                 <div className="mt-2">
                   <p>Existing Images:</p>
-                  {formData.image_urls.map((url, index) => (
-                    <img
-                      key={index}
-                      src={`${API_BASE_URL}${url}`}
-                      alt="Project"
-                      width="100"
-                      className="me-2"
-                    />
-                  ))}
+              {formData.image_urls.map((url, index) => {
+                const src = url.startsWith("http")
+                  ? url                         // Cloudinary (production)
+                  : `${API_BASE_URL}${url}`;    // Local /uploads
+
+                return (
+                  <img
+                    key={index}
+                    src={src}
+                    alt="Project"
+                    width="100"
+                    className="me-2"
+                  />
+                );
+              })}
                 </div>
               )}
             </Form.Group>

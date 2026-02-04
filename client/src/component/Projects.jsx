@@ -70,15 +70,21 @@ const Projects = () => {
               <div className="card project-card">
                 <Carousel interval={null} className="project-carousel">
                   {project.image_urls?.length > 0 ? (
-                    project.image_urls.map((url, index) => (
-                      <Carousel.Item key={index}>
-                        <img
-                          src={`${API_BASE_URL}${url}`}
-                          className="card-img-top project-image"
-                          alt={project.title}
-                        />
-                      </Carousel.Item>
-                    ))
+              project.image_urls.map((url, index) => {
+                const src = url.startsWith("http")
+                  ? url                         // Cloudinary
+                  : `${API_BASE_URL}${url}`;    // Local /uploads
+
+                return (
+                  <Carousel.Item key={index}>
+                    <img
+                      src={src}
+                      className="card-img-top project-image"
+                      alt={project.title}
+                    />
+                  </Carousel.Item>
+                );
+              })
                   ) : (
                     <Carousel.Item>
                       <img

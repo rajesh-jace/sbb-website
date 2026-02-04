@@ -58,14 +58,20 @@ const ProjectDetailss = () => {
     <div className="project-detail-container container my-4">
       <h1 className="text-center">{project.title}</h1>
       <div className="project-images">
-        {project.image_urls.map((url, index) => (
-          <img
-            key={index}
-            src={`${API_BASE_URL}${url}`}
-            alt={`Project ${project.title}`}
-            className="project-image"
-          />
-        ))}
+        {project.image_urls.map((url, index) => {
+      const src = url.startsWith("http")
+        ? url                         // Cloudinary (production)
+        : `${API_BASE_URL}${url}`;    // Local /uploads
+
+      return (
+        <img
+          key={index}
+          src={src}
+          alt={`Project ${project.title}`}
+          className="project-image"
+        />
+      );
+    })}
       </div>
       <p className="project-description">{project.description}</p>
       <p>
