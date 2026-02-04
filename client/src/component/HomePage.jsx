@@ -58,9 +58,17 @@ const HomePage = () => {
                   variant="top"
                   src={
                     project.image_urls?.[0]
-                      ? `${API_BASE_URL}${project.image_urls[0]}`
+                      ? (project.image_urls[0].startsWith("http")
+                          ? project.image_urls[0]                      // Cloudinary (production)
+                          : `${API_BASE_URL}${project.image_urls[0]}`  // Local /uploads
+                        )
                       : "/images/default.jpg"
                   }
+                  // {
+                  //   project.image_urls?.[0]
+                  //     ? `${API_BASE_URL}${project.image_urls[0]}`
+                  //     : "/images/default.jpg"
+                  // }
                   alt={project.title}
                 />
 
