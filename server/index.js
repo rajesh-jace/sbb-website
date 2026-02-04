@@ -211,7 +211,7 @@ app.get("/projects", async (req, res) => {
     if (env === "production" && process.env.DATABASE_URL) {
       // PostgreSQL
       const result = await db.query("SELECT * FROM projects");
-      projects = result.rows;
+      projects = result.rows;           // ✅ NO destructuring here
     } else {
       // MySQL
       const [rows] = await db.query("SELECT * FROM projects");
@@ -236,9 +236,12 @@ app.get("/projects", async (req, res) => {
     res.status(200).json({ success: true, data: processedProjects });
   } catch (error) {
     console.error("Error fetching projects:", error.message);
-    res.status(500).send({ success: false, error: "Failed to fetch projects." });
+    res
+      .status(500)
+      .send({ success: false, error: "Failed to fetch projects." });
   }
 });
+
 
 
 app.get("/projects/:id", async (req, res) => {
