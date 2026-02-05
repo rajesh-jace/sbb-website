@@ -18,16 +18,27 @@ const ProjectDetails = ({ show, onClose, project, onEdit }) => {
       </Modal.Header>
       <Modal.Body>
         <Carousel>
-          {project.image_urls.map((url, index) => (
-            <Carousel.Item key={index}>
-              <img
-                className="d-block w-100"
-                src={`${API_BASE_URL}${url}`}
-                alt={`Slide ${index + 1}`}
-              />
-            </Carousel.Item>
-          ))}
+          {project.image_urls?.map((url, index) => {
+            if (!url) return null;
+
+            const src =
+              typeof url === "string" && url.startsWith("http")
+                ? url                         // Cloudinary
+                : `${API_BASE_URL}${url}`;    // Local /uploads
+
+            return (
+              <Carousel.Item key={index}>
+                <img
+                  className="d-block w-100"
+                  src={src}
+                  alt={`Slide ${index + 1}`}
+                />
+              </Carousel.Item>
+            );
+          })}
         </Carousel>
+
+
         <div className="mt-3">
           <h5>Description</h5>
           <p className="project-description">{project.description}</p>
