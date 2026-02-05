@@ -358,120 +358,152 @@ app.post("/build-project", upload.array("landPhotos", 10), async (req, res) => {
   console.log("Uploaded files:", photos);
 
   try {
-    // ✅ DYNAMIC PHOTO PATHS (Cloudinary vs Local)
+    // 1) Build photoPaths
     let photoPaths = [];
     if (photos && photos.length > 0) {
       if (env === 'production') {
-        // Cloudinary: full CDN URLs
-        photoPaths = photos.map(file => file.secure_url);
+        photoPaths = photos.map(file => file.path);      // Cloudinary URL
       } else {
-        // Local: filesystem paths
         photoPaths = photos.map(file => file.path.replace(/\\/g, "/"));
       }
     }
 
+    // 2) Save to DB (must not depend on email)
     await db.query(
       "INSERT INTO build_requests (name, email, phone, projectType, location, measurements, additionalDetails, photos, submittedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())",
       [name, email, phone, projectType, location, measurements, additionalDetails, JSON.stringify(photoPaths)]
     );
 
-    // ✅ DYNAMIC EMAIL ATTACHMENTS (Local only - Cloudinary doesn't need local files)
-    let attachments = [];
-    if (env !== 'production' && photos && photos.length > 0) {
-      attachments = photos.map(file => ({
-        filename: file.originalname,
-        path: file.path,
-      }));
+    // 3) Try to send emails, but don't fail the whole request if they error
+    try {
+      let attachments = [];
+      if (env !== 'production' && photos && photos.length > 0) {
+        attachments = photos.map(file => ({
+          filename: file.originalname,
+          path: file.path,
+        }));
+      }
+
+      const emailContent = `
+        <h3>You have a new project request from a client:</h3>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Project Type:</strong> ${projectType}</p>
+        <p><strong>Location:</strong> ${location}</p>
+        <p><strong>Measurements:</strong> ${measurements}</p>
+        <p><strong>Additional Details:</strong> ${additionalDetails}</p>
+        ${photoPaths.length > 0 ? `<p><strong>Photos:</strong> ${photoPaths.length} images</p>` : ''}
+      `;
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER,
+        subject: "New Build Project Request",
+        html: emailContent,
+        attachments,
+      });
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Thank You for Your Build Project Request",
+        html: `
+          <h3>Hi ${name},</h3>
+          <p>Thank you for submitting your build project details. Our team has received your request and will contact you soon.</p>
+          <p>Best regards,<br>Sree Balaji Builders</p>
+        `,
+      });
+
+      console.log("📧 Build-project emails sent successfully");
+    } catch (emailErr) {
+      console.error("⚠️ Failed to send build-project emails:", emailErr.message);
+      // don't throw further
     }
 
-    const emailContent = `
-      <h3>You have a new project request from a client:</h3>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Phone:</strong> ${phone}</p>
-      <p><strong>Project Type:</strong> ${projectType}</p>
-      <p><strong>Location:</strong> ${location}</p>
-      <p><strong>Measurements:</strong> ${measurements}</p>
-      <p><strong>Additional Details:</strong> ${additionalDetails}</p>
-      ${photoPaths.length > 0 ? `<p><strong>Photos:</strong> ${photoPaths.length} images</p>` : ''}
-    `;
-
-    // Email to owner
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      subject: "New Build Project Request",
-      html: emailContent,
-      attachments,  // Only local files (Cloudinary URLs in HTML body)
-    });
-
-    // Email to customer (no attachments)
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Thank You for Your Build Project Request",
-      html: `
-        <h3>Hi ${name},</h3>
-        <p>Thank you for submitting your build project details. Our team has received your request and will contact you soon.</p>
-        <p>Best regards,<br>Sree Balaji Builders</p>
-      `,
-    });
-
-    res.status(200).json({ 
-      success: true, 
-      message: "Your request has been sent successfully!",
-      photosCount: photoPaths.length
+    // 4) Always respond success if DB insert worked
+    res.status(200).json({
+      success: true,
+      message: "Your request has been submitted successfully!",
     });
   } catch (error) {
-    console.error("Error saving to DB or sending email:", error);
-    res.status(500).json({ success: false, message: "Failed to send your request. Please try again." });
+    console.error("Error saving to DB:", error);
+    res.status(500).json({ success: false, message: "Failed to save your request. Please try again." });
   }
 });
+
 
 
 // Build requests management
 app.get("/build-requests", async (req, res) => {
   try {
-    const [requests] = await db.query("SELECT * FROM build_requests ORDER BY submittedAt DESC");
-    
-    // ✅ Parse photos JSON for frontend (same for local & Cloudinary)
-    const processedRequests = requests.map(request => {
+    const [requests] = await db.query(
+      "SELECT * FROM build_requests ORDER BY submittedAt DESC"
+    );
+
+    const processedRequests = requests.map((request) => {
       try {
-        if (typeof request.photos === 'string') {
+        if (typeof request.photos === "string") {
           request.photos = JSON.parse(request.photos);
         }
       } catch (err) {
-        console.error(`Error parsing photos for request ID ${request.id}:`, err.message);
+        console.error(
+          `Error parsing photos for request ID ${request.id}:`,
+          err.message
+        );
         request.photos = [];
       }
       return request;
     });
-    
+
     res.status(200).json({ success: true, data: processedRequests });
   } catch (error) {
-    res.status(500).json({ success: false, error: "Failed to fetch build requests." });
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to fetch build requests." });
   }
 });
+
 
 
 app.delete("/build-requests/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    // Optional: Log what would be deleted (Cloudinary auto-manages)
-    if (env === 'production') {
-      const [request] = await db.query("SELECT photos FROM build_requests WHERE id = ?", [id]);
+    if (env === "production") {
+      const [request] = await db.query(
+        "SELECT photos FROM build_requests WHERE id = ?",
+        [id]
+      );
       if (request.length > 0) {
-        const photos = JSON.parse(request[0].photos || "[]");
-        console.log(`🗑️ Would delete ${photos.length} images from Cloudinary (auto-managed)`);
+        let photos = [];
+        try {
+          photos = JSON.parse(request[0].photos || "[]");
+        } catch (err) {
+          console.error(
+            "Error parsing photos during build-request delete:",
+            request[0].photos,
+            err.message
+          );
+          photos = [];
+        }
+        console.log(
+          `🗑️ Would delete ${photos.length} images from Cloudinary (auto-managed)`
+        );
       }
     }
 
     await db.query("DELETE FROM build_requests WHERE id = ?", [id]);
-    res.status(200).json({ success: true, message: "Request deleted successfully!" });
+    res
+      .status(200)
+      .json({ success: true, message: "Request deleted successfully!" });
   } catch (error) {
-    res.status(500).json({ success: false, error: "Failed to delete request." });
+    console.error("Error deleting build request:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to delete request." });
   }
 });
+
 
 
 // ENQUIRY ROUTE ✅ Updated with env vars
