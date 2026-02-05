@@ -277,7 +277,7 @@ app.put("/projects/:id", upload.array("images", 5), async (req, res) => {
     if (req.files && req.files.length > 0) {
       if (env === 'production') {
         // Cloudinary: full CDN URLs
-        newImageUrls = req.files.map(file => file.secure_url);
+        newImageUrls = req.files.map(file => file.path);
       } else {
         // Local: filesystem paths
         newImageUrls = req.files.map(file => `/uploads/${file.filename}`);
@@ -320,6 +320,7 @@ app.put("/projects/:id", upload.array("images", 5), async (req, res) => {
 // Delete a project
 app.delete("/projects/:id", async (req, res) => {
   const { id } = req.params;
+  console.log("🗑️ Delete request for id:", id);
   try {
     // ✅ Optional: Delete images from Cloudinary (Production only)
     if (env === 'production') {
@@ -334,7 +335,7 @@ app.delete("/projects/:id", async (req, res) => {
     await db.query("DELETE FROM projects WHERE id = ?", [id]);
     res.status(200).send({ success: true, message: "Project deleted successfully!" });
   } catch (error) {
-    console.error("Error deleting project:", error.message);
+    console.error("Error deleting project:", error);
     res.status(500).send({ success: false, error: "Failed to delete project." });
   }
 });

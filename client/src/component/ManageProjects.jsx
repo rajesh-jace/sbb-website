@@ -121,7 +121,7 @@ const ManageProjects = () => {
       await axios.delete(`${API_BASE_URL}/projects/${id}`);
       setProjects((prev) => prev.filter((project) => project.id !== id));
     } catch (error) {
-      console.error("Error deleting project:", error);
+      console.error("Error deleting project:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
