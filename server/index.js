@@ -268,7 +268,7 @@ app.put("/projects/:id", upload.array("images", 5), async (req, res) => {
     try {
       imageUrls = JSON.parse(existingProject[0].image_urls || "[]");
     } catch (error) {
-      console.error("Error parsing existing image_urls:", error.message);
+      console.error("Error parsing existing image_urls:", existingProject[0].image_urls, error.message);
       imageUrls = [];
     }
 
@@ -322,12 +322,16 @@ app.delete("/projects/:id", async (req, res) => {
   const { id } = req.params;
   console.log("🗑️ Delete request for id:", id);
   try {
-    // ✅ Optional: Delete images from Cloudinary (Production only)
     if (env === 'production') {
       const [project] = await db.query("SELECT image_urls FROM projects WHERE id = ?", [id]);
       if (project.length > 0) {
-        const imageUrls = JSON.parse(project[0].image_urls || "[]");
-        // Note: Cloudinary auto-manages storage, no manual cleanup needed
+        let imageUrls = [];
+        try {
+          imageUrls = JSON.parse(project[0].image_urls || "[]");
+        } catch (err) {
+          console.error("Error parsing image_urls during delete:", project[0].image_urls, err.message);
+          imageUrls = [];
+        }
         console.log(`🗑️ Would delete ${imageUrls.length} images from Cloudinary`);
       }
     }
@@ -339,6 +343,7 @@ app.delete("/projects/:id", async (req, res) => {
     res.status(500).send({ success: false, error: "Failed to delete project." });
   }
 });
+
 
 
 
