@@ -29,19 +29,31 @@ const ManageRequests = () => {
   };
 
   // Helper to parse photos
- const parsePhotos = (photoField) => {
+
+  const parsePhotos = (photoField) => {
   if (!photoField) return [];
   if (Array.isArray(photoField)) return photoField;
   try {
     const arr = JSON.parse(photoField);
-    if (Array.isArray(arr)) return arr;
-  } catch (e) {
-    if (typeof photoField === "string" && photoField.includes(",")) {
-      return photoField.split(",").map(p => p.trim().replace(/\\/g, "/")).filter(Boolean);
-    }
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
   }
-  return [];
 };
+
+//  const parsePhotos = (photoField) => {
+//   if (!photoField) return [];
+//   if (Array.isArray(photoField)) return photoField;
+//   try {
+//     const arr = JSON.parse(photoField);
+//     if (Array.isArray(arr)) return arr;
+//   } catch (e) {
+//     if (typeof photoField === "string" && photoField.includes(",")) {
+//       return photoField.split(",").map(p => p.trim().replace(/\\/g, "/")).filter(Boolean);
+//     }
+//   }
+//   return [];
+// };
 
 
   if (loading) return <div>Loading requests...</div>;
@@ -71,10 +83,27 @@ const ManageRequests = () => {
               <td>
   {parsePhotos(req.photos).length > 0
     ? <div className="photos-thumbs">
-        {parsePhotos(req.photos).slice(0,2).map((photo, idx) =>
-  <img key={idx} src={`${API_BASE_URL}/${photo.replace(/\\/g, "/")}`} className="thumb" alt={`land-${idx}`}/>
-    )
-    }
+        {parsePhotos(req.photos).slice(0, 2).map((photo, idx) => {
+  if (!photo) return null;
+
+  const cleaned = typeof photo === "string"
+    ? photo.replace(/\\/g, "/")
+    : "";
+
+  const src = cleaned.startsWith("http")
+    ? cleaned                      // Cloudinary
+    : `${API_BASE_URL}/${cleaned}`; // Local upload
+
+  return (
+    <img
+      key={idx}
+      src={src}
+      className="thumb"
+      alt={`land-${idx}`}
+    />
+  );
+})}
+
       </div>
     : <span style={{color:'#666'}}>No photos (or upload failed)</span>}
 </td>
@@ -104,14 +133,31 @@ const ManageRequests = () => {
             <div>
               {/* Photo slider */}
             <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
-            {parsePhotos(activeRequest.photos).map((photo, idx) => (
-                <img
-                key={idx}
-                src={`${API_BASE_URL}/${photo.replace(/\\/g, "/")}`}
-                alt={`land-${idx}`}
-                style={{ width: "100%", height: "300px", objectFit: "cover", borderRadius: "8px" }}
-                />
-            ))}
+              {parsePhotos(activeRequest.photos).map((photo, idx) => {
+    if (!photo) return null;
+
+    const cleaned = typeof photo === "string"
+      ? photo.replace(/\\/g, "/")
+      : "";
+
+    const src = cleaned.startsWith("http")
+      ? cleaned
+      : `${API_BASE_URL}/${cleaned}`;
+
+    return (
+      <img
+        key={idx}
+        src={src}
+        alt={`land-${idx}`}
+        style={{
+          width: "100%",
+          height: "300px",
+          objectFit: "cover",
+          borderRadius: "8px",
+        }}
+      />
+    );
+  })}
             </Slider>
 
               {/* Data section */}
