@@ -511,38 +511,48 @@ app.post("/enquiry", async (req, res) => {
   const { name, email, phone, projectName } = req.body;
 
   try {
-    // Email to admin
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      subject: "New Enquiry Received",
-      html: `
-        <h3>New Enquiry Details:</h3>
-        <p><strong>Project:</strong> ${projectName}</p>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-      `,
-    });
+    // Try to send both emails, but don't let failure kill the request
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER,
+        subject: "New Enquiry Received",
+        html: `
+          <h3>New Enquiry Details:</h3>
+          <p><strong>Project:</strong> ${projectName}</p>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+        `,
+      });
 
-    // Email to customer
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Thank You for Your Enquiry",
-      html: `
-        <h3>Thank you for reaching out to us!</h3>
-        <p>We have received your enquiry for the project: <strong>${projectName}</strong>.</p>
-        <p>We will get back to you soon.</p>
-      `,
-    });
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Thank You for Your Enquiry",
+        html: `
+          <h3>Thank you for reaching out to us!</h3>
+          <p>We have received your enquiry for the project: <strong>${projectName}</strong>.</p>
+          <p>We will get back to you soon.</p>
+        `,
+      });
+    } catch (emailErr) {
+      console.error("Error sending enquiry email:", emailErr.message);
+      // Do not throw further
+    }
 
-    res.status(200).json({ success: true, message: "Enquiry sent successfully." });
+    // Always respond success so frontend doesn’t see 500
+    res
+      .status(200)
+      .json({ success: true, message: "Enquiry submitted (email may have failed)." });
   } catch (error) {
-    console.error("Error sending email:", error);
-    res.status(500).json({ success: false, message: "Failed to send enquiry." });
+    console.error("Unexpected error in /enquiry:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to process enquiry." });
   }
 });
+
 
 // ✅ Dynamic port from environment
 const port = process.env.PORT || 4500;
