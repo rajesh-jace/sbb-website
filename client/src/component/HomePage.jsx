@@ -38,7 +38,7 @@ const HomePage = () => {
               View Projects
             </Button>
             <Button
-              as={link}
+              as={Link}
               to="/contact"
               variant="outline-light"
               className="hero-btn"
