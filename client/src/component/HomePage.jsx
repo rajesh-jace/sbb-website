@@ -30,15 +30,17 @@ const HomePage = () => {
           </p>
           <div>
             <Button
+              as={Link}
+              to="/projects"
               variant="primary"
-              href="/projects"
               className="me-2 hero-btn"
             >
               View Projects
             </Button>
             <Button
+              as={link}
+              to="/contact"
               variant="outline-light"
-              href="/contact"
               className="hero-btn"
             >
               Contact Us

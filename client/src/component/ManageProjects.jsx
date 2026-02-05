@@ -285,9 +285,11 @@ const ManageProjects = () => {
                 <div className="mt-2">
                   <p>Existing Images:</p>
               {formData.image_urls.map((url, index) => {
-                const src = url.startsWith("http")
-                  ? url                         // Cloudinary (production)
-                  : `${API_BASE_URL}${url}`;    // Local /uploads
+                if (!url) return null; // skip null/empty entries
+                const src =
+              typeof url === "string" && url.startsWith("http")
+          ? url                     // Cloudinary (production)
+          : `${API_BASE_URL}${url}`; // Local /uploads
 
                 return (
                   <img

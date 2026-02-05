@@ -59,9 +59,11 @@ const ProjectDetailss = () => {
       <h1 className="text-center">{project.title}</h1>
       <div className="project-images">
         {project.image_urls.map((url, index) => {
-      const src = url.startsWith("http")
-        ? url                         // Cloudinary (production)
-        : `${API_BASE_URL}${url}`;    // Local /uploads
+          if (!url) return null;
+      const src =
+    typeof url === "string" && url.startsWith("http")
+      ? url
+      : `${API_BASE_URL}${url}`;
 
       return (
         <img
