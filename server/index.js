@@ -76,12 +76,23 @@ if (env === 'production') {
 
 // ✅ Nodemailer using environment variables (GLOBAL)
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 });
+
+transporter.verify((err, success) => {
+  if (err) {
+    console.error("Nodemailer verify failed:", err);
+  } else {
+    console.log("Nodemailer is ready to send emails");
+  }
+});
+
 
 // ✅ DYNAMIC DATABASE - MySQL (local) vs PostgreSQL (production)
 let db;
