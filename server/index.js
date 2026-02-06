@@ -406,17 +406,18 @@ app.delete("/projects/:id", async (req, res) => {
 app.post("/build-project", upload.array("landPhotos", 10), async (req, res) => {
   const { name, email, phone, projectType, location, measurements, additionalDetails } = req.body;
   const photos = req.files;
-  console.log("📤 Build project upload mode:", env === 'production' ? 'Cloudinary' : 'Local');
+
+  console.log("📤 Build project upload mode:", env === "production" ? "Cloudinary" : "Local");
   console.log("Uploaded files:", photos);
 
   try {
     // 1) Build photoPaths
     let photoPaths = [];
     if (photos && photos.length > 0) {
-      if (env === 'production') {
-        photoPaths = photos.map(file => file.path);      // Cloudinary URL
+      if (env === "production") {
+        photoPaths = photos.map((file) => file.path);      // Cloudinary URL
       } else {
-        photoPaths = photos.map(file => file.path.replace(/\\/g, "/"));
+        photoPaths = photos.map((file) => file.path.replace(/\\/g, "/"));
       }
     }
 
@@ -429,8 +430,10 @@ app.post("/build-project", upload.array("landPhotos", 10), async (req, res) => {
     // 3) Try to send emails, but don't fail the whole request if they error
     try {
       let attachments = [];
-      if (env !== 'production' && photos && photos.length > 0) {
-        attachments = photos.map(file => ({
+
+      // Attachments only for local (Nodemailer); skip in production (Resend HTTP)
+      if (env === "local" && photos && photos.length > 0) {
+        attachments = photos.map((file) => ({
           filename: file.originalname,
           path: file.path,
         }));
@@ -445,19 +448,19 @@ app.post("/build-project", upload.array("landPhotos", 10), async (req, res) => {
         <p><strong>Location:</strong> ${location}</p>
         <p><strong>Measurements:</strong> ${measurements}</p>
         <p><strong>Additional Details:</strong> ${additionalDetails}</p>
-        ${photoPaths.length > 0 ? `<p><strong>Photos:</strong> ${photoPaths.length} images</p>` : ''}
+        ${photoPaths.length > 0 ? `<p><strong>Photos:</strong> ${photoPaths.length} images</p>` : ""}
       `;
 
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+      // Owner
+      await sendEmail({
         to: process.env.EMAIL_USER,
         subject: "New Build Project Request",
         html: emailContent,
-        attachments,
+        attachments, // used only in local env
       });
 
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+      // Client
+      await sendEmail({
         to: email,
         subject: "Thank You for Your Build Project Request",
         html: `
@@ -467,7 +470,7 @@ app.post("/build-project", upload.array("landPhotos", 10), async (req, res) => {
         `,
       });
 
-      console.log("📧 Build-project emails sent successfully");
+      console.log("📧 Build-project emails handled");
     } catch (emailErr) {
       console.error("⚠️ Failed to send build-project emails:", emailErr.message);
       // don't throw further
@@ -480,9 +483,12 @@ app.post("/build-project", upload.array("landPhotos", 10), async (req, res) => {
     });
   } catch (error) {
     console.error("Error saving to DB:", error);
-    res.status(500).json({ success: false, message: "Failed to save your request. Please try again." });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to save your request. Please try again." });
   }
 });
+
 
 
 
@@ -565,8 +571,7 @@ app.post("/enquiry", async (req, res) => {
   try {
     // Try to send both emails, but don't let failure kill the request
     try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+      await sendEmail({
         to: process.env.EMAIL_USER,
         subject: "New Enquiry Received",
         html: `
@@ -578,8 +583,7 @@ app.post("/enquiry", async (req, res) => {
         `,
       });
 
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+      await sendEmail({
         to: email,
         subject: "Thank You for Your Enquiry",
         html: `
@@ -604,6 +608,7 @@ app.post("/enquiry", async (req, res) => {
       .json({ success: false, message: "Failed to process enquiry." });
   }
 });
+
 
 
 // ✅ Dynamic port from environment
