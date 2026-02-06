@@ -7,6 +7,8 @@ const nodemailer = require("nodemailer");
 const dotenv = require('dotenv');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { Resend } = require("resend");
+
 
 // ✅ Load environment variables FIRST (before everything else)
 const env = process.env.NODE_ENV || 'local';
@@ -75,25 +77,59 @@ if (env === 'production') {
 }
 
 // ✅ Nodemailer using environment variables (GLOBAL)
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.BREVO_USER,
-    pass: process.env.BREVO_SMTP_KEY,
-  },
-});
+let transporter = null;
+let resend = null;
 
+if (env === 'local') {
+  transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,   // app password
+    },
+  });
 
+  transporter.verify((err, success) => {
+    if (err) {
+      console.error("Local Nodemailer verify failed:", err);
+    } else {
+      console.log("Local Nodemailer ready");
+    }
+  });
+}
 
-transporter.verify((err, success) => {
-  if (err) {
-    console.error("Nodemailer verify failed:", err);
-  } else {
-    console.log("Nodemailer is ready to send emails");
+// Production: Resend HTTP API (no SMTP)
+if (env === "production") {
+  resend = new Resend(process.env.RESEND_API_KEY);
+  console.log("📧 Resend initialized for production");
+}
+
+// Helper that both routes will use
+async function sendEmail({ to, subject, html, attachments }) {
+  if (env === "local" && transporter) {
+    return transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to,
+      subject,
+      html,
+      attachments,
+    });
   }
-});
+
+  if (env === "production" && resend) {
+    return resend.emails.send({
+      from: "SBB Website <onboarding@resend.dev>", // later change to your own verified sender
+      to,
+      subject,
+      html,
+      // Resend has limited attachment support; for now omit attachments in prod
+    });
+  }
+
+  console.warn("Email sending skipped: no provider configured for env:", env);
+}
+
+
 
 
 // ✅ DYNAMIC DATABASE - MySQL (local) vs PostgreSQL (production)
@@ -151,9 +187,8 @@ app.post("/contact", async (req, res) => {
 
   try {
     // Send email to the owner
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,  // ✅ Env var
-      to: process.env.EMAIL_USER,    // ✅ Owner email from env
+    await sendEmail({
+      to: process.env.EMAIL_USER,
       subject: "New Inquiry from Contact Form",
       html: `<p><strong>Name:</strong> ${name}</p>
              <p><strong>Email:</strong> ${email}</p>
@@ -162,8 +197,7 @@ app.post("/contact", async (req, res) => {
     });
 
     // Send confirmation email to the client
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,  // ✅ Env var
+    await sendEmail({
       to: email,
       subject: "Thank You for Contacting Us",
       html: `<p>Hi ${name},</p>
@@ -171,12 +205,17 @@ app.post("/contact", async (req, res) => {
              <p>Best regards,<br>Sree Balaji Builders</p>`,
     });
 
-    res.status(200).send({ success: true, message: "Message sent successfully!" });
+    res
+      .status(200)
+      .send({ success: true, message: "Message sent successfully!" });
   } catch (error) {
     console.error("Error sending message:", error);
-    res.status(500).send({ success: false, error: "Failed to send message." });
+    res
+      .status(500)
+      .send({ success: false, error: "Failed to send message." });
   }
 });
+
 
 // PROJECT ROUTES (ALL UNCHANGED - DB uses env vars automatically)
 // Add a project with image upload
