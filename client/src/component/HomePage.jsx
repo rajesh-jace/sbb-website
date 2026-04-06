@@ -42,7 +42,7 @@ const HomePage = () => {
       <section className="sbb-hero">
         <div className="sbb-hero__overlay" />
         <div className="sbb-hero__content">
-          <span className="sbb-hero__eyebrow">Est. 2009 · Salem, Tamil Nadu</span>
+          <span className="sbb-hero__eyebrow">Est. 2009 · Chennai, Tamil Nadu</span>
           <h1 className="sbb-hero__title">
             Building Dreams,<br />
             <span className="sbb-hero__accent">Crafting Futures</span>
@@ -85,7 +85,7 @@ const HomePage = () => {
             <Col lg={6}>
               <span className="sbb-section-tag">About SBB</span>
               <h2 className="sbb-section-title">Who We Are</h2>
-              <p className="sbb-about-strip__body">Sree Balaji Builders (SBB) is a Salem-based construction firm renowned for delivering quality homes and commercial spaces. Founded with a commitment to integrity and excellence, we have transformed hundreds of plots into proud properties across Tamil Nadu.</p>
+              <p className="sbb-about-strip__body">Sree Balaji Builders (SBB) is a Chennai-based construction firm renowned for delivering quality homes and commercial spaces. Founded with a commitment to integrity and excellence, we have transformed hundreds of plots into proud properties across Tamil Nadu.</p>
               <p className="sbb-about-strip__body">Every project is backed by experienced engineers, premium materials, and transparent dealings — from foundation to final handover.</p>
               <Link to="/aboutus" className="sbb-btn sbb-btn--primary" style={{display:"inline-block",marginTop:"1.2rem"}}>Know More</Link>
             </Col>
