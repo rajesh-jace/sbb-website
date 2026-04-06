@@ -67,5 +67,25 @@ button:focus-visible {
   }
 } */
 
+/* Global reset & base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  background: #fafafa;
+  color: #1a1a2e;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+h1,h2,h3,h4,h5,h6 { line-height: 1.25; }
+
+a { color: inherit; }
+
+img { max-width: 100%; display: block; }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
 
 

@@ -1,114 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap');
+
 .projects-container {
-  margin-top: 20px;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  padding-top: 2.5rem; padding-bottom: 3rem;
 }
 
-h1,
-h2 {
-  color: #333;
-  margin-bottom: 20px;
+.projects-container h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.8rem,4vw,2.5rem); color: #1a1a2e;
+  margin-bottom: 2.5rem; font-weight: 900;
 }
-
-.ongoing-projects h2 {
-  color: #007bff;
-}
-
-.all-projects h2 {
-  color: #28a745;
-}
-
-.project-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%; /* Ensure card takes full width of its parent container */
-  max-width: 300px; /* Fixed card width */
-  margin: 0 auto; /* Center the card */
-  /* transition: transform 0.2s ease-in-out; */
-}
-
-.project-card:hover {
-  transform: scale(1.05);
-}
-
-.project-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-.project-carousel {
-  border-bottom: 1px solid #ddd;
-}
-
-.card-title {
-  font-size: 1.25rem;
-  color: #333;
-}
-
-.card-text {
-  color: #555;
-  margin-top: 10px;
-}
-
-button {
-  border: none;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-success {
-  background-color: #28a745;
-  color: white;
-}
-
-.btn-success:hover {
-  background-color: #218838;
-}
-
-/* Grid adjustments */
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  /* justify-content: space-around;  Space the cards evenly */
-}
-
-.col-md-4 {
-  flex: 0 0 auto; /* Do not allow card to grow or shrink */
-  margin-bottom: 20px;
-}
-
-/* No changes needed for smaller screens, fixed card size works for all */
 
 .section-heading-card {
-  display: flex;
-  align-items: center;
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 12px 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  max-width: 320px;
+  display: flex; align-items: center; gap: .85rem;
+  background: #fff; border-radius: 12px;
+  padding: .85rem 1.25rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+  margin-bottom: 1.75rem; border-left: 4px solid #EF6F25;
 }
+.heading-icon { width: 32px; height: 32px; object-fit: contain; }
+.heading-text { font-family: 'Playfair Display', Georgia, serif; font-size: 1.25rem; font-weight: 700; color: #1a1a2e; margin: 0; }
 
-.heading-icon {
-  width: 32px;
-  height: 32px;
-  margin-right: 12px;
+.project-card {
+  border: 1.5px solid #f0f0f0 !important; border-radius: 14px !important;
+  overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,.07) !important;
+  transition: transform .3s ease, box-shadow .3s ease !important;
+  width: 100%; max-width: 100%; margin: 0 auto;
 }
+.project-card:hover { transform: translateY(-6px) !important; box-shadow: 0 16px 40px rgba(0,0,0,.12) !important; }
 
-.heading-text {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-}
+.project-image { width: 100%; height: 200px; object-fit: cover; display: block; }
+.project-carousel { border-bottom: 1px solid #f0f0f0; }
+
+.card-title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; font-weight: 700; color: #1a1a2e !important; }
+.card-text { color: #64748b !important; font-size: .92rem; line-height: 1.6; }
+.card-body p strong { color: #EF6F25; }
+
+.btn-primary { background: #EF6F25 !important; border-color: #EF6F25 !important; border-radius: 50px !important; font-weight: 600 !important; font-size: .88rem !important; padding: .45rem 1.1rem !important; }
+.btn-primary:hover { background: #c9581b !important; border-color: #c9581b !important; }
+.btn-success { background: #16a34a !important; border-color: #16a34a !important; border-radius: 50px !important; font-weight: 600 !important; font-size: .88rem !important; padding: .45rem 1.1rem !important; }
+.btn-success:hover { background: #15803d !important; border-color: #15803d !important; }

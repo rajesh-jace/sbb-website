@@ -1,49 +1,58 @@
-/* Navbar background and link colors */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap');
+
 .custom-navbar {
-    background-color: white !important;
-    border-bottom: 2px solid #ddd;
-  }
-  
-  .custom-navbar .nav-link {
-    color: black !important;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-  
-  .custom-navbar .nav-link:hover {
-    color: #EF6F25 !important;
-  }
-  
-  .custom-navbar .brand-name {
-    color: #EF6F25 !important;
-    font-weight: bold;
-    font-size: 1.5rem;
-  }
-  
-  .custom-navbar .brand-name:hover {
-    text-decoration: none;
-    color: #d65c1f !important;
-  }
-  
-  /* Active link styling */
-  .custom-navbar .nav-link.active-link {
-    color: #EF6F25 !important;
-    font-weight: bold;
-    border-bottom: 2px solid #EF6F25;
-  }
-  
-  /* Dropdown styling */
-  .custom-navbar .dropdown-menu {
-    border: none;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .custom-navbar .dropdown-item {
-    color: black !important;
-  }
-  
-  .custom-navbar .dropdown-item:hover {
-    color: white !important;
-    background-color: #EF6F25 !important;
-  }
-  
+  background: #fff !important;
+  border-bottom: 1px solid rgba(0,0,0,.07) !important;
+  padding: .75rem 0;
+  box-shadow: 0 2px 16px rgba(0,0,0,.06);
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+}
+
+.custom-navbar .brand-name {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: #EF6F25 !important;
+  font-size: 1.35rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -.01em;
+}
+.custom-navbar .brand-name:hover { color: #c9581b !important; text-decoration: none; }
+
+.custom-navbar .nav-link {
+  color: #1a1a2e !important;
+  font-weight: 500 !important;
+  font-size: .93rem;
+  padding: .45rem .85rem !important;
+  border-radius: 8px;
+  transition: all .2s ease;
+  position: relative;
+}
+.custom-navbar .nav-link::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; right: 50%;
+  height: 2px; background: #EF6F25; border-radius: 2px;
+  transition: left .25s ease, right .25s ease;
+}
+.custom-navbar .nav-link:hover::after,
+.custom-navbar .nav-link.active-link::after { left: .85rem; right: .85rem; }
+.custom-navbar .nav-link:hover { color: #EF6F25 !important; background: #fff4ec; }
+.custom-navbar .nav-link.active-link { color: #EF6F25 !important; font-weight: 600 !important; }
+
+.custom-navbar .dropdown-menu {
+  border: none; border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.12);
+  padding: .5rem;
+}
+.custom-navbar .dropdown-item {
+  color: #1a1a2e !important; border-radius: 8px;
+  padding: .55rem .85rem; font-size: .91rem;
+}
+.custom-navbar .dropdown-item:hover { background: #fff4ec !important; color: #EF6F25 !important; }
+
+/* Owner login link styled as pill */
+.custom-navbar .nav-link[href="/login"],
+.custom-navbar a[href="/login"] {
+  background: #EF6F25; color: #fff !important;
+  border-radius: 50px; padding: .4rem 1.1rem !important;
+  font-weight: 600 !important;
+}
+.custom-navbar .nav-link[href="/login"]:hover { background: #c9581b; color: #fff !important; }
+.custom-navbar .nav-link[href="/login"]::after { display: none; }
